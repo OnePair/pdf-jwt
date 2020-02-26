@@ -28,8 +28,8 @@ describe("PDF Jsig tests", () => {
       jwk: jwkResolver
     });
 
-    jwk1 = await JWK.createKey("EC", "P-256", { alg: "ES256" });;
-    jwk2 = await JWK.createKey("EC", "P-256", { alg: "ES256" });;
+    jwk1 = await JWK.createKey("EC", "P-256", { alg: "ES256" });
+    jwk2 = await JWK.createKey("EC", "P-256", { alg: "ES256" });
 
     did1 = new DidJwk(jwk1);
     did2 = new DidJwk(jwk2);
@@ -44,7 +44,7 @@ describe("PDF Jsig tests", () => {
   describe("Signing tests", () => {
     it("Should not throw an error when signing", async () => {
       pdf1Signed = await pdfSigner.signPdf(pdf1, jwk1,
-        { firstName: "First Name" }, {
+        { firstName: "First name" }, {
           issuer: did1.getDidUri(),
           algorithm: "ES256"
         });

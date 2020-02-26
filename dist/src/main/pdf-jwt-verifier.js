@@ -132,7 +132,7 @@ var PdfJwtVerifier = /** @class */ (function () {
                 pdfBuffer.slice(ByteRange[2], ByteRange[2] + ByteRange[3]),
             ]);
             var jwt = pdfBuffer.slice(ByteRange[0] + ByteRange[1] + 1, ByteRange[2])
-                .toString().replace(/(?:00|>)+$/, "");
+                .toString().replace(/(?:\*|>)+$/, "");
             signatures[index] = { jwt: jwt, signedData: signedData };
         }
         return signatures;

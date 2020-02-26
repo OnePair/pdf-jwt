@@ -20,10 +20,10 @@ export class PdfJwtSigner {
       DEFAULT_BYTE_RANGE_PLACEHOLDER;
   }
 
-  public signPdf(pdfBuffer: Buffer, jwk: JWK.ECKey, payload: object);
-  public signPdf(pdfBuffer: Buffer, jwk: JWK.ECKey, payload: object,
+  public signPdf(pdfBuffer: Buffer, jwk: JWK.Key, payload: object);
+  public signPdf(pdfBuffer: Buffer, jwk: JWK.Key, payload: object,
     signOptions: JWT.SignOptions);
-  public signPdf(pdfBuffer: Buffer, jwk: JWK.ECKey, payload: object,
+  public signPdf(pdfBuffer: Buffer, jwk: JWK.Key, payload: object,
     signOptions?: JWT.SignOptions, digestAlgorithm?: string): Buffer {
     if (!(pdfBuffer instanceof Buffer)) {
       throw new SignPdfError(
@@ -102,7 +102,7 @@ export class PdfJwtSigner {
     }
 
     // Pad the jwt
-    let padding: string = '0'.repeat(placeholderLength - jwt.length);
+    let padding: string = '*'.repeat(placeholderLength - jwt.length);
     jwt += padding;
     // Add the signature to the file
     pdf = Buffer.concat([

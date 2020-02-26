@@ -71,7 +71,7 @@ var PdfJwtSigner = /** @class */ (function () {
             throw new node_signpdf_1.SignPdfError("Signature exceeds placeholder length: " + pdf.length * 2 + " > " + placeholderLength, node_signpdf_1.SignPdfError.TYPE_INPUT);
         }
         // Pad the jwt
-        var padding = '0'.repeat(placeholderLength - jwt.length);
+        var padding = '*'.repeat(placeholderLength - jwt.length);
         jwt += padding;
         // Add the signature to the file
         pdf = Buffer.concat([

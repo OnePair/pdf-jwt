@@ -13,7 +13,7 @@
     "@types/jsonwebtoken": "^8.3.7",
     "did-jwt": "git+https://github.com/OnePair/did-jwt.git#01ae53334c26eb8e41a61831092bb1b3e3851587",
     "jsonwebtoken": "^8.5.1",
-    "node-did-jwk": "git+https://github.com/OnePair/node-did-jwk.git#01ae53334c26eb8e41a61831092bb1b3e3851587",
+    "node-did-jwk": "git+https://github.com/OnePair/node-did-jwk.git#4677f0a74e23279f11fffae43b2fd7643041381d",
     "node-forge": "^0.9.1",
     "node-jose": "^1.1.3",
     "node-signpdf": "^1.2.3",
