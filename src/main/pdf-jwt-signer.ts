@@ -2,9 +2,10 @@ import { DIDJwt } from "did-jwt";
 import { JWK } from "node-jose";
 import JWT from "jsonwebtoken"
 import { SignPdfError } from "node-signpdf";
+
 import {
   plainAddPlaceholder
-} from "../../node_modules/node-signpdf/dist/helpers";
+} from "node-signpdf/dist/helpers";
 
 import Crypto from "crypto";
 

@@ -5,7 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var did_jwt_1 = require("did-jwt");
 var node_signpdf_1 = require("node-signpdf");
-var helpers_1 = require("../../node_modules/node-signpdf/dist/helpers");
+/*import {
+  plainAddPlaceholder
+} from "../../node_modules/node-signpdf/dist/helpers";*/
+var helpers_1 = require("node-signpdf/dist/helpers");
 var crypto_1 = __importDefault(require("crypto"));
 exports.DEFAULT_BYTE_RANGE_PLACEHOLDER = "**********";
 var PdfJwtSigner = /** @class */ (function () {
