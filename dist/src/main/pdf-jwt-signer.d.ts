@@ -1,5 +1,6 @@
 /// <reference types="node" />
-import { JWK, JWT } from "jose";
+import { JWK } from "node-jose";
+import JWT from "jsonwebtoken";
 export declare const DEFAULT_BYTE_RANGE_PLACEHOLDER: string;
 export declare class PdfJwtSigner {
     private byteRangePlaceholder;

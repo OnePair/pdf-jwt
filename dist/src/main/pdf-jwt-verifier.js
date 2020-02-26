@@ -40,8 +40,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var node_signpdf_1 = require("node-signpdf");
-var jose_1 = require("jose");
 var did_jwt_1 = require("did-jwt");
+var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var errors_1 = require("./errors");
 var crypto_1 = __importDefault(require("crypto"));
 var PdfJwtVerifier = /** @class */ (function () {
@@ -66,7 +66,7 @@ var PdfJwtVerifier = /** @class */ (function () {
                                     index = _a[_i];
                                     signature = signatures[index];
                                     jwt = signature["jwt"];
-                                    decodedJwt = jose_1.JWT.decode(jwt);
+                                    decodedJwt = jsonwebtoken_1.default.decode(jwt);
                                     // Validate the signature
                                     if (!("iss" in decodedJwt))
                                         throw new errors_1.InvalidSignatureError("Issuer not found in the signature!");
@@ -132,7 +132,7 @@ var PdfJwtVerifier = /** @class */ (function () {
                 pdfBuffer.slice(ByteRange[2], ByteRange[2] + ByteRange[3]),
             ]);
             var jwt = pdfBuffer.slice(ByteRange[0] + ByteRange[1] + 1, ByteRange[2])
-                .toString().replace(/(?:00|>)+$/, "").slice(0, -1);
+                .toString().replace(/(?:00|>)+$/, "");
             signatures[index] = { jwt: jwt, signedData: signedData };
         }
         return signatures;

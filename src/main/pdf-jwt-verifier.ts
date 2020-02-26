@@ -1,7 +1,7 @@
 import { Resolver } from "did-resolver";
 import { SignPdfError } from "node-signpdf";
-import { JWT } from "jose";
 import { DIDJwt } from "did-jwt";
+import JWT from "jsonwebtoken"
 
 import { InvalidSignatureError } from "./errors";
 
@@ -23,7 +23,7 @@ export class PdfJwtVerifier {
 
           const signature: object = signatures[index];
           const jwt: string = signature["jwt"];
-          const decodedJwt: object = JWT.decode(jwt);
+          const decodedJwt: any = JWT.decode(jwt);
 
           // Validate the signature
           if (!("iss" in decodedJwt))
@@ -110,7 +110,7 @@ export class PdfJwtVerifier {
 
       const jwt: string =
         pdfBuffer.slice(ByteRange[0] + ByteRange[1] + 1, ByteRange[2])
-          .toString().replace(/(?:00|>)+$/, "").slice(0, -1);
+          .toString().replace(/(?:00|>)+$/, "");
 
       signatures[index] = { jwt, signedData };
     }

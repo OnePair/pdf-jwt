@@ -40,7 +40,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("../main");
-var jose_1 = require("jose");
+var node_jose_1 = require("node-jose");
 var node_did_jwk_1 = require("node-did-jwk");
 var did_resolver_1 = require("did-resolver");
 var path_1 = __importDefault(require("path"));
@@ -56,24 +56,40 @@ describe("PDF Jsig tests", function () {
     var pdf1SignedTwice;
     var pdfSigner;
     var pdfVerifier;
-    before(function () {
-        var jwkResolver = node_did_jwk_1.getResolver();
-        resolver = new did_resolver_1.Resolver({
-            jwk: jwkResolver
+    before(function () { return __awaiter(void 0, void 0, void 0, function () {
+        var jwkResolver;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    jwkResolver = node_did_jwk_1.getResolver();
+                    resolver = new did_resolver_1.Resolver({
+                        jwk: jwkResolver
+                    });
+                    return [4 /*yield*/, node_jose_1.JWK.createKey("EC", "P-256", { alg: "ES256" })];
+                case 1:
+                    jwk1 = _a.sent();
+                    ;
+                    return [4 /*yield*/, node_jose_1.JWK.createKey("EC", "P-256", { alg: "ES256" })];
+                case 2:
+                    jwk2 = _a.sent();
+                    ;
+                    did1 = new node_did_jwk_1.DidJwk(jwk1);
+                    did2 = new node_did_jwk_1.DidJwk(jwk2);
+                    pdf1 = fs_1.default.readFileSync(path_1.default.join(__dirname, "pdf1.pdf"));
+                    pdfSigner = new main_1.PdfJwtSigner();
+                    pdfVerifier = new main_1.PdfJwtVerifier(resolver);
+                    return [2 /*return*/];
+            }
         });
-        jwk1 = jose_1.JWK.generateSync("EC", "P-256");
-        jwk2 = jose_1.JWK.generateSync("EC", "P-256");
-        did1 = new node_did_jwk_1.DidJwk(jwk1);
-        did2 = new node_did_jwk_1.DidJwk(jwk2);
-        pdf1 = fs_1.default.readFileSync(path_1.default.join(__dirname, "pdf1.pdf"));
-        pdfSigner = new main_1.PdfJwtSigner();
-        pdfVerifier = new main_1.PdfJwtVerifier(resolver);
-    });
+    }); });
     describe("Signing tests", function () {
         it("Should not throw an error when signing", function () { return __awaiter(void 0, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, pdfSigner.signPdf(pdf1, jwk1, { firstName: "First Name" }, { issuer: did1.getDidUri() })];
+                    case 0: return [4 /*yield*/, pdfSigner.signPdf(pdf1, jwk1, { firstName: "First Name" }, {
+                            issuer: did1.getDidUri(),
+                            algorithm: "ES256"
+                        })];
                     case 1:
                         pdf1Signed = _a.sent();
                         fs_1.default.writeFileSync(path_1.default.join(__dirname, "pdf1-signed.pdf"), pdf1Signed);
@@ -84,7 +100,10 @@ describe("PDF Jsig tests", function () {
         it("Should not throw an error when adding another signature", function () { return __awaiter(void 0, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, pdfSigner.signPdf(pdf1Signed, jwk2, { firstName: "First Name" }, { issuer: did2.getDidUri() })];
+                    case 0: return [4 /*yield*/, pdfSigner.signPdf(pdf1Signed, jwk2, { firstName: "First Name" }, {
+                            issuer: did2.getDidUri(),
+                            algorithm: "ES256"
+                        })];
                     case 1:
                         pdf1SignedTwice = _a.sent();
                         fs_1.default.writeFileSync(path_1.default.join(__dirname, "pdf1-signed-twice.pdf"), pdf1SignedTwice);

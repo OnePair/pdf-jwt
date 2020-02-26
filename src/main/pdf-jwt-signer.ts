@@ -1,6 +1,6 @@
 import { DIDJwt } from "did-jwt";
-import { JWK, JWT } from "jose";
-
+import { JWK } from "node-jose";
+import JWT from "jsonwebtoken"
 import { SignPdfError } from "node-signpdf";
 import {
   plainAddPlaceholder
