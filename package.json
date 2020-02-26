@@ -2,7 +2,7 @@
   "name": "pdf-jwt",
   "version": "0.0.1",
   "description": "",
-  "main": "/dist/src/index.js",
+  "main": "./dist/src/index.js",
   "scripts": {
     "build": "tsc && tsc --declaration",
     "test": "mocha -r ts-node/register ./src/test/index.ts"
