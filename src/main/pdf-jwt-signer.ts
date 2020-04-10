@@ -10,6 +10,7 @@ import {
 import Crypto from "crypto";
 
 export const DEFAULT_BYTE_RANGE_PLACEHOLDER: string = "**********";
+const DEFAULT_SIGNATURE_LENGTH: number = 8192;
 
 export class PdfJwtSigner {
 
@@ -25,7 +26,9 @@ export class PdfJwtSigner {
   public signPdf(pdfBuffer: Buffer, jwk: JWK.Key, payload: object,
     signOptions: JWT.SignOptions);
   public signPdf(pdfBuffer: Buffer, jwk: JWK.Key, payload: object,
-    signOptions?: JWT.SignOptions, digestAlgorithm?: string): Buffer {
+    signOptions: JWT.SignOptions, signatureLength?: Number);
+  public signPdf(pdfBuffer: Buffer, jwk: JWK.Key, payload: object,
+    signOptions?: JWT.SignOptions, signatureLength?: Number, digestAlgorithm?: string): Buffer {
     if (!(pdfBuffer instanceof Buffer)) {
       throw new SignPdfError(
         "PDF expected as Buffer.",
@@ -33,7 +36,10 @@ export class PdfJwtSigner {
       );
     }
     // Add the place holder
-    let pdf: Buffer = plainAddPlaceholder({ pdfBuffer });
+    let pdf: Buffer = plainAddPlaceholder({
+      pdfBuffer: pdfBuffer,
+      signatureLength: signatureLength || DEFAULT_SIGNATURE_LENGTH
+    });
 
     // Find the ByteRange placeholder.
     const byteRangePlaceholder: Array<any> = [
@@ -80,11 +86,11 @@ export class PdfJwtSigner {
     ]);
 
     // Now create the jwt
-    let checksum: string = Crypto.createHash(digestAlgorithm || "sha256")
+    const checksum: string = Crypto.createHash(digestAlgorithm || "sha256")
       .update(pdf)
       .digest("hex").toString();
 
-    let sigPayload: object = {
+    const sigPayload: object = {
       "checksum": checksum,
       "digest_algorithm": digestAlgorithm || "sha256"
     };
@@ -93,22 +99,25 @@ export class PdfJwtSigner {
       sigPayload[key] = payload[key];
     });
 
-    let jwt: string = DIDJwt.sign(sigPayload, jwk, signOptions);
+    const jwt: string = DIDJwt.sign(sigPayload, jwk, signOptions);
 
-    if ((jwt.length * 2) > placeholderLength) {
+    // Encode the jwt to hex
+    let jwtHex: string = Buffer.from(jwt, "utf8").toString("hex");
+
+    if (jwtHex.length > placeholderLength) {
       throw new SignPdfError(
         `Signature exceeds placeholder length: ${pdf.length * 2} > ${placeholderLength}`,
         SignPdfError.TYPE_INPUT,
       );
     }
 
-    // Pad the jwt
-    let padding: string = '*'.repeat(placeholderLength - jwt.length);
-    jwt += padding;
+    // Pad the jwt hex
+    const padding: string = '0'.repeat(placeholderLength - jwtHex.length);
+    jwtHex += padding;
     // Add the signature to the file
     pdf = Buffer.concat([
       pdf.slice(0, byteRange[1]),
-      Buffer.from(`<${jwt}>`),
+      Buffer.from(`<${jwtHex}>`),
       pdf.slice(byteRange[1]),
     ]);
 

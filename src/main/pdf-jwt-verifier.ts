@@ -108,9 +108,11 @@ export class PdfJwtVerifier {
         pdfBuffer.slice(ByteRange[2], ByteRange[2] + ByteRange[3]),
       ]);
 
-      const jwt: string =
-        pdfBuffer.slice(ByteRange[0] + ByteRange[1] + 1, ByteRange[2])
-          .toString().replace(/(?:\*|>)+$/, "");
+      const jwtHex: string = pdfBuffer.slice(ByteRange[0] + ByteRange[1] + 1,
+         ByteRange[2]).toString("binary").replace(/(?:00|>)+$/, '');;
+
+      const jwt: string = Buffer.from(jwtHex, "hex").toString();
+
       signatures[index] = { jwt, signedData };
     }
 
