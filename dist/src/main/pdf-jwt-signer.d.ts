@@ -7,4 +7,5 @@ export declare class PdfJwtSigner {
     constructor();
     signPdf(pdfBuffer: Buffer, jwk: JWK.Key, payload: object): any;
     signPdf(pdfBuffer: Buffer, jwk: JWK.Key, payload: object, signOptions: JWT.SignOptions): any;
+    signPdf(pdfBuffer: Buffer, jwk: JWK.Key, payload: object, signOptions: JWT.SignOptions, signatureLength?: Number): any;
 }

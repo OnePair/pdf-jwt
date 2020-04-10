@@ -131,8 +131,9 @@ var PdfJwtVerifier = /** @class */ (function () {
                 pdfBuffer.slice(ByteRange[0], ByteRange[0] + ByteRange[1]),
                 pdfBuffer.slice(ByteRange[2], ByteRange[2] + ByteRange[3]),
             ]);
-            var jwt = pdfBuffer.slice(ByteRange[0] + ByteRange[1] + 1, ByteRange[2])
-                .toString().replace(/(?:\*|>)+$/, "");
+            var jwtHex = pdfBuffer.slice(ByteRange[0] + ByteRange[1] + 1, ByteRange[2]).toString("binary").replace(/(?:00|>)+$/, '');
+            ;
+            var jwt = Buffer.from(jwtHex, "hex").toString();
             signatures[index] = { jwt: jwt, signedData: signedData };
         }
         return signatures;

@@ -5,23 +5,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var did_jwt_1 = require("did-jwt");
 var node_signpdf_1 = require("node-signpdf");
-/*import {
-  plainAddPlaceholder
-} from "../../node_modules/node-signpdf/dist/helpers";*/
 var helpers_1 = require("node-signpdf/dist/helpers");
 var crypto_1 = __importDefault(require("crypto"));
 exports.DEFAULT_BYTE_RANGE_PLACEHOLDER = "**********";
+var DEFAULT_SIGNATURE_LENGTH = 8192;
 var PdfJwtSigner = /** @class */ (function () {
     function PdfJwtSigner(byteRangePlaceholder) {
         this.byteRangePlaceholder = byteRangePlaceholder ||
             exports.DEFAULT_BYTE_RANGE_PLACEHOLDER;
     }
-    PdfJwtSigner.prototype.signPdf = function (pdfBuffer, jwk, payload, signOptions, digestAlgorithm) {
+    PdfJwtSigner.prototype.signPdf = function (pdfBuffer, jwk, payload, signOptions, signatureLength, digestAlgorithm) {
         if (!(pdfBuffer instanceof Buffer)) {
             throw new node_signpdf_1.SignPdfError("PDF expected as Buffer.", node_signpdf_1.SignPdfError.TYPE_INPUT);
         }
         // Add the place holder
-        var pdf = helpers_1.plainAddPlaceholder({ pdfBuffer: pdfBuffer });
+        var pdf = helpers_1.plainAddPlaceholder({
+            pdfBuffer: pdfBuffer,
+            signatureLength: signatureLength || DEFAULT_SIGNATURE_LENGTH
+        });
         // Find the ByteRange placeholder.
         var byteRangePlaceholder = [
             0,
@@ -70,16 +71,18 @@ var PdfJwtSigner = /** @class */ (function () {
             sigPayload[key] = payload[key];
         });
         var jwt = did_jwt_1.DIDJwt.sign(sigPayload, jwk, signOptions);
-        if ((jwt.length * 2) > placeholderLength) {
+        // Encode the jwt to hex
+        var jwtHex = Buffer.from(jwt, "utf8").toString("hex");
+        if (jwtHex.length > placeholderLength) {
             throw new node_signpdf_1.SignPdfError("Signature exceeds placeholder length: " + pdf.length * 2 + " > " + placeholderLength, node_signpdf_1.SignPdfError.TYPE_INPUT);
         }
-        // Pad the jwt
-        var padding = '*'.repeat(placeholderLength - jwt.length);
-        jwt += padding;
+        // Pad the jwt hex
+        var padding = '0'.repeat(placeholderLength - jwtHex.length);
+        jwtHex += padding;
         // Add the signature to the file
         pdf = Buffer.concat([
             pdf.slice(0, byteRange[1]),
-            Buffer.from("<" + jwt + ">"),
+            Buffer.from("<" + jwtHex + ">"),
             pdf.slice(byteRange[1]),
         ]);
         return pdf;
